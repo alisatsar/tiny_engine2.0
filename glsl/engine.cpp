@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "event.h"
+#include "gl_core_4_3.hpp"
 
 #include <string>
 #include <cassert>
@@ -56,25 +57,20 @@ class my_tiny_engine
 public:
     std::string check_version() final
     {
-        std::string s;
-        SDL_version compiled;
-        SDL_version linked;
+        const GLubyte *renderer = gl::GetString(gl::RENDERER);
+        const GLubyte *vendor = gl::GetString(gl::VENDOR);
+        const GLubyte *version = gl::GetString(gl::VERSION);
+        const GLubyte *glslVersion = gl::GetString(gl::SHADING_LANGUAGE_VERSION);
 
-        SDL_VERSION(&compiled);
-        SDL_GetVersion(&linked);
+        GLint major, minor;
+        gl::GetIntegerv(gl::MAJOR_VERSION, &major);
+        gl::GetIntegerv(gl::MINOR_VERSION, &minor);
 
-        bool result = SDL_VERSIONNUM(compiled.major, compiled.minor, compiled.patch) ==
-                SDL_VERSIONNUM(linked.major, linked.minor, linked.patch);
-
-        if(!result)
-        {
-            s = "WARNING: The compiled version is not equal linked version!";
-        }
-        else
-        {
-            s = "SUCCESS: The compiled version is equal linked version!";
-        }
-        return s;
+        //printf("Vendor : %s\n", vendor);
+        //printf("Renderer : %s\n", renderer);
+        //printf("Version : %s\n", version);
+        //printf("Vendor major %d : minor %d\n", major, minor);
+        //printf("GLSL Version : %s\n", glslVersion);
     }
 
     bool initialize() final
