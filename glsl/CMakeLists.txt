@@ -33,9 +33,10 @@ add_library(gl SHARED gl_core_4_3.cpp gl_core_4_3.hpp)
 
 add_executable(glsl main.cpp)
 
-#add_library(gl_core STATIC gl_core_4_3.c)
-
 add_library(engine STATIC engine.cpp)
 
-target_compile_features(gl PUBLIC cxx_std_17)
-target_link_libraries(glsl gl engine ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} ${glm_LIBRARIES})
+add_library(shader STATIC render/shader.cpp)
+add_library(file STATIC file.cpp)
+
+target_compile_features(gl PUBLIC cxx_std_20)
+target_link_libraries(glsl gl engine shader file ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} ${glm_LIBRARIES})
