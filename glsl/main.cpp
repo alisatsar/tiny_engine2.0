@@ -63,7 +63,7 @@ int main()
             }
         }
 
-        new_shader->draw_triangle();
+        new_shader->draw_triangle_alternative();
         m->swap_buffers();
         new_shader->clear();
     };

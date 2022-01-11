@@ -13,6 +13,7 @@ public:
     void create_program();
 
     void draw_triangle();
+    void draw_triangle_alternative();
     void clear();
 
 private:

@@ -179,3 +179,56 @@ void shader::draw_triangle()
     gl::DrawArrays(gl::TRIANGLES, 0, 3);
 
 }
+
+void shader::draw_triangle_alternative()
+{
+    GLuint vaoHandle;
+
+    float positionData[] =
+    {
+        -0.8f, -0.8f, 0.0f,
+        0.8f, -0.8f, 0.0f,
+        0.0f, 0.8f, 0.0f
+    };
+
+    float colorData[] =
+    {
+        1.f, 0.f, 0.f,
+        0.f, 1.f, 0.f,
+        0.f, 0.f, 1.f
+    };
+
+    GLuint vboHandles[2];
+    gl::GenBuffers(2, vboHandles);
+    GLuint positionBufferDescr = vboHandles[0];
+    GLuint colorBufferDescr = vboHandles[1];
+
+    gl::BindBuffer(gl::ARRAY_BUFFER, positionBufferDescr);
+    gl::BufferData(gl::ARRAY_BUFFER,
+                   9 * sizeof(float),
+                   positionData,
+                   gl::STATIC_DRAW);
+
+    gl::BindBuffer(gl::ARRAY_BUFFER, colorBufferDescr);
+    gl::BufferData(gl::ARRAY_BUFFER,
+                   9 * sizeof(float),
+                   colorData,
+                   gl::STATIC_DRAW);
+
+    gl::GenVertexArrays(1, &vaoHandle);
+    gl::BindVertexArray(vaoHandle);
+    gl::EnableVertexAttribArray(0);
+    gl::EnableVertexAttribArray(1);
+
+    gl::BindVertexBuffer(0, positionBufferDescr, 0, sizeof(GLfloat)*3);
+    gl::BindVertexBuffer(1, colorBufferDescr, 0, sizeof(GLfloat)*3);
+
+    gl::VertexAttribFormat(0, 3, gl::FLOAT, gl::FALSE_, 0);
+    gl::VertexAttribBinding(0, 0);
+    gl::VertexAttribFormat(1, 3, gl::FLOAT, gl::FALSE_, 0);
+    gl::VertexAttribBinding(1, 1);
+
+
+    gl::BindVertexArray(vaoHandle);
+    gl::DrawArrays(gl::TRIANGLES, 0, 3);
+}
