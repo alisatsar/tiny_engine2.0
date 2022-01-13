@@ -16,6 +16,8 @@ public:
     void draw_triangle_alternative();
     void clear();
 
+    void get_active_attrib_and_index();
+
 private:
     GLuint create_shader(GLenum shaderType, const std::string& filePath);
     GLint print_error(GLenum status, GLuint descr);

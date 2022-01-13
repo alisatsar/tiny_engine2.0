@@ -68,6 +68,7 @@ int main()
         new_shader->clear();
     };
 
+    new_shader->get_active_attrib_and_index();
     m->unintialize();
 
     return 0;
