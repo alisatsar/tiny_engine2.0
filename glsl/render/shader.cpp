@@ -22,6 +22,26 @@ namespace nShader {
             return "";
         }
     }
+
+    std::string get_type_string(GLenum type)
+    {
+        if(type == gl::NAME_LENGTH)
+        {
+            return "NAME_LENGTH";
+        }
+        else if(type == gl::TYPE)
+        {
+            return "TYPE";
+        }
+        else if(type == gl::LOCATION)
+        {
+            return "LOCATION";
+        }
+        else
+        {
+            return "";
+        }
+    }
 }
 
 shader::shader()
@@ -101,7 +121,6 @@ GLuint shader::create_shader(GLenum shaderType, const std::string& filePath)
     shaderFile->read();
     std::string shaderFileContext = shaderFile->get_context();
     const GLchar * shaderCode = shaderFileContext.c_str();
-    std::cout << shaderCode << std::endl;
 
     const GLchar * codeArray[] = {shaderCode};
     gl::ShaderSource (shaderDescr, 1, codeArray, NULL);
@@ -231,4 +250,24 @@ void shader::draw_triangle_alternative()
 
     gl::BindVertexArray(vaoHandle);
     gl::DrawArrays(gl::TRIANGLES, 0, 3);
+}
+
+void shader::get_active_attrib_and_index()
+{
+    GLint numAttribs;
+    gl::GetProgramInterfaceiv(progDescr, gl::PROGRAM_INPUT, gl::ACTIVE_RESOURCES, &numAttribs);
+
+    GLenum properties[] = { gl::NAME_LENGTH, gl::TYPE, gl::LOCATION };
+
+    printf("Active attributes:\n");
+    for(int i = 0; i < numAttribs; ++i)
+    {
+        GLint results[3];
+        gl::GetProgramResourceiv(progDescr, gl::PROGRAM_INPUT, i, 3, properties, 3, NULL, results);
+
+        GLint nameBufSize = results[0] + 1;
+        char * name = new char[nameBufSize];
+        gl::GetProgramResourceName(progDescr, gl::PROGRAM_INPUT, i, nameBufSize, NULL, name);
+        printf("%-5d %s (%s)\n", results[2], name, nShader::get_type_string(results[1]).c_str());
+    }
 }
