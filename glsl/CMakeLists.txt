@@ -35,8 +35,8 @@ add_executable(glsl main.cpp)
 
 add_library(engine STATIC engine.cpp)
 
-add_library(shader STATIC render/shader.cpp)
+add_library(render STATIC render/shader.cpp render/polygon.cpp render/vertex.cpp render/color.cpp)
 add_library(file STATIC file.cpp)
 
 target_compile_features(gl PUBLIC cxx_std_20)
-target_link_libraries(glsl gl engine shader file ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} ${glm_LIBRARIES})
+target_link_libraries(glsl gl engine render file ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} ${glm_LIBRARIES})

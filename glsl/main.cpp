@@ -1,6 +1,8 @@
 #include "engine.h"
 #include "event.h"
 #include "render/shader.h"
+#include "render/polygon.h"
+#include "render/color.h"
 
 #include <iostream>
 #include <vector>
@@ -36,9 +38,26 @@ int main()
 
     printf("%i.\n", didLoad.GetNumMissing());
 
-    //std::cout << m->check_version();
-
     std::unique_ptr<shader> new_shader = std::make_unique<shader>();
+
+    float positionData[] =
+    {
+        -0.8f, -0.8f, 0.0f,
+        0.8f, -0.8f, 0.0f,
+        0.0f, 0.8f, 0.0f
+    };
+
+    float colorData[] =
+    {
+        1.f, 0.f, 0.f,
+        0.f, 1.f, 0.f,
+        0.f, 0.f, 1.f
+    };
+
+    te::polygon pol(glm::vec3(-0.8f, -0.8f, 0.0f), te::color(1.f, 0.f, 0.f),
+                        glm::vec3(0.8f, -0.8f, 0.0f), te::color(0.f, 1.f, 0.f),
+                        glm::vec3(0.0f, 0.8f, 0.0f), te::color(0.f, 0.f, 1.f));
+    std::vector<te::polygon> polygonsToDraw {pol};
 
     new_shader->craate_vert_shader("basic.vert");
     new_shader->create_fram_shader("basic.frag");
@@ -63,7 +82,7 @@ int main()
             }
         }
 
-        new_shader->draw_triangle_alternative();
+        new_shader->draw_polygon(pol);
         m->swap_buffers();
         new_shader->clear();
     };

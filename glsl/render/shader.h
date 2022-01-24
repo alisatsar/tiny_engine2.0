@@ -1,7 +1,9 @@
 #pragma once
 #include "../gl_core_4_3.hpp"
+#include "polygon.h"
 
 #include <string>
+#include <vector>
 
 class shader
 {
@@ -14,6 +16,9 @@ public:
 
     void draw_triangle();
     void draw_triangle_alternative();
+    void draw_polygons(const std::vector<te::polygon>& polygons);
+    void draw_polygon(const te::polygon& pol);
+
     void clear();
 
     void get_active_attrib_and_index();
