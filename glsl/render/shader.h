@@ -19,9 +19,10 @@ public:
     void draw_polygons(const std::vector<te::polygon>& polygons);
     void draw_polygon(const te::polygon& pol);
 
-    void clear();
+    void draw();
 
     void get_active_attrib_and_index();
+    void get_active_uniform();
 
 private:
     GLuint create_shader(GLenum shaderType, const std::string& filePath);
@@ -30,4 +31,6 @@ private:
     GLuint vertDescr;
     GLuint fragDescr;
     GLuint progDescr;
+
+    GLuint vaoHandle;
 };

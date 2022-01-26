@@ -62,6 +62,7 @@ int main()
     new_shader->craate_vert_shader("basic.vert");
     new_shader->create_fram_shader("basic.frag");
     new_shader->create_program();
+    new_shader->draw_polygon(pol);
 
     bool continue_loop = true;
 
@@ -81,13 +82,14 @@ int main()
                 break;
             }
         }
+        new_shader->draw();
 
-        new_shader->draw_polygon(pol);
         m->swap_buffers();
-        new_shader->clear();
+
     };
 
     new_shader->get_active_attrib_and_index();
+    new_shader->get_active_uniform();
     m->unintialize();
 
     return 0;
