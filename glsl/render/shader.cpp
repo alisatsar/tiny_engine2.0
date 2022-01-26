@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <iostream>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace nShader {
     const std::string ShaderDirectory{"/shaders/"};
@@ -102,10 +103,21 @@ void shader::create_program()
     }
 }
 
-void shader::clear()
+void shader::draw()
 {
     gl::ClearColor(1.f, 1.0, 0.f, 0.0f);
     gl::Clear(gl::COLOR_BUFFER_BIT);
+
+    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.f), 30.f, glm::vec3(1.f, 0.f, 0.f));
+
+    GLuint location = gl::GetUniformLocation(progDescr, "RotationMatrix");
+    if(location >= 0)
+    {
+        gl::UniformMatrix4fv(location, 1, gl::FALSE_, &rotationMatrix[0][0]);
+    }
+
+    gl::BindVertexArray(vaoHandle);
+    gl::DrawArrays(gl::TRIANGLES, 0, 3);
 }
 
 GLuint shader::create_shader(GLenum shaderType, const std::string& filePath)
@@ -149,8 +161,6 @@ GLint shader::print_error(GLenum status, GLuint descr)
 
 void shader::draw_triangle()
 {
-    GLuint vaoHandle;
-
     float positionData[] =
     {
         -0.8f, -0.8f, 0.0f,
@@ -193,17 +203,11 @@ void shader::draw_triangle()
 
     gl::BindBuffer(gl::ARRAY_BUFFER, colorBufferDescr);
     gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE_, 0, NULL);
-
-    gl::BindVertexArray(vaoHandle);
-    gl::DrawArrays(gl::TRIANGLES, 0, 3);
-
 }
 
 
 void shader::draw_triangle_alternative()
 {
-    GLuint vaoHandle;
-
     float positionData[] =
     {
         -0.8f, -0.8f, 0.0f,
@@ -247,10 +251,6 @@ void shader::draw_triangle_alternative()
     gl::VertexAttribBinding(0, 0);
     gl::VertexAttribFormat(1, 3, gl::FLOAT, gl::FALSE_, 0);
     gl::VertexAttribBinding(1, 1);
-
-
-    gl::BindVertexArray(vaoHandle);
-    gl::DrawArrays(gl::TRIANGLES, 0, 3);
 }
 
 void shader::draw_polygons(const std::vector<te::polygon>& polygons)
@@ -260,7 +260,6 @@ void shader::draw_polygons(const std::vector<te::polygon>& polygons)
 
 void shader::draw_polygon(const te::polygon& pol)
 {
-    GLuint vaoHandle;
     float positionData[9];
     float colorData[9];
     for(int i = 0; i < pol.vertexes.size(); ++i)
@@ -303,10 +302,6 @@ void shader::draw_polygon(const te::polygon& pol)
     gl::VertexAttribBinding(0, 0);
     gl::VertexAttribFormat(1, 3, gl::FLOAT, gl::FALSE_, 0);
     gl::VertexAttribBinding(1, 1);
-
-
-    gl::BindVertexArray(vaoHandle);
-    gl::DrawArrays(gl::TRIANGLES, 0, 3);
 }
 
 void shader::get_active_attrib_and_index()
@@ -326,5 +321,30 @@ void shader::get_active_attrib_and_index()
         char * name = new char[nameBufSize];
         gl::GetProgramResourceName(progDescr, gl::PROGRAM_INPUT, i, nameBufSize, NULL, name);
         printf("%-5d %s (%s)\n", results[2], name, nShader::get_type_string(results[1]).c_str());
+    }
+}
+
+void shader::get_active_uniform()
+{
+    GLint numUniforms = 0;
+    gl::GetProgramInterfaceiv(progDescr, gl::UNIFORM, gl::ACTIVE_RESOURCES, &numUniforms);
+
+    GLenum properties[] = {gl::NAME_LENGTH, gl::TYPE, gl::LOCATION, gl::BLOCK_INDEX};
+
+    printf("Active uniforms:\n");
+
+    for(int i = 0; i < numUniforms; ++i)
+    {
+        GLint results[4];
+        gl::GetProgramResourceiv(progDescr, gl::UNIFORM, i, 4, properties, 4, NULL, results);
+        if(results[3] != -1)
+        {
+            continue;
+        }
+        GLint nameBufSize = results[0] + 1;
+        char * name = new char[nameBufSize];
+        gl::GetProgramResourceName(progDescr, gl::UNIFORM, i, nameBufSize, NULL, name);
+        printf("%-5d %s \n", results[2], name);
+        delete [] name;
     }
 }
